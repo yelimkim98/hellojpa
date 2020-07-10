@@ -28,7 +28,7 @@ public class Main {
         /** 요약 : DB에 접근해서, 트랜젝션을 가져온 담에, 트랜젝션을 시작한다. */
 
         Member member = new Member();
-        member.setId(100L);
+//        member.setId(100L);
         member.setName("이종성");
 
         entityManager.persist(member);  // persist 뜻 : 영구저장하다.  이렇게 생각하면 된다.
