@@ -1,6 +1,7 @@
 package hellojpa;
 
 import hellojpa.entity.Member;
+import hellojpa.entity.Team;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -11,31 +12,39 @@ public class Main {
     public static void main(String[] args) {
         EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("hello");
-        /*  윗줄에 대한 설명
-         * persistence.xml 에 persistence-unit name="hello" 이부분!!
-         * hello 라는 이름을 이용해서 EntityManagerFactory 객체를 생성한다.
-         */
         EntityManager entityManager =  emf.createEntityManager();
-        /* 실제 개발할때는 고객의 요청이 들어올 때 마다 Entity Manager 만들어서 쓰면 된다. */
 
         EntityTransaction entityTransaction = entityManager.getTransaction();
-        /*
-         * 엔티티매니저를 통해서 먼저 해야할 것은
-         * 트랜젝션을 얻는 것이다.
-         * JPA 의 모든 활동은 트랜젝션 안에서 이루어져야한다.
-         */
-        entityTransaction.begin();  // 트랜젝션이 시작된다.
-        /** 요약 : DB에 접근해서, 트랜젝션을 가져온 담에, 트랜젝션을 시작한다. */
+        entityTransaction.begin();
+
+        Team teamA = new Team();
+        teamA.setName("이따비");
+
+        entityManager.persist(teamA);  // persist 뜻 : 영구저장하다.  이렇게 생각하면 된다.
 
         Member member = new Member();
-//        member.setId(100L);
-        member.setName("이종성");
+        member.setName("김예림");
+        member.setTeam(teamA);
 
         entityManager.persist(member);  // persist 뜻 : 영구저장하다.  이렇게 생각하면 된다.
 
+        entityManager.flush();  // DB 에 쿼리 전부 보내기
+        entityManager.clear();  // 캐시 비우기
+
+        /** 역방향 조회하기 */
+
+        /*
+         * Member foundMember = entityManager.find(Member.class, member.getId());
+         * Team foundTeam = foundMember.getTeam();
+         * */
+        Team foundTeam = entityManager.find(Team.class, teamA.getId());
+
+        for (Member found : foundTeam.getMembers()) {
+            System.out.println(found);
+        }
+
         entityTransaction.commit();
 
-        System.out.println("hello");
         emf.close();
 
         /**
