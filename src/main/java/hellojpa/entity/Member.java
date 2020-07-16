@@ -1,6 +1,7 @@
 package hellojpa.entity;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,14 +18,28 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)     // auto increment
     private Long id;
+
     @Column(name = "username")      // username : DB 컬럼명
     private String name;
+
+    @Embedded
+    private Email email;
     private int age;
+
     @Enumerated(EnumType.STRING)
     private MemberType memberType;
+
     @ManyToOne(fetch = FetchType.LAZY)      // fetch type 거의 lazy 쓰자. 속단해서 최적화하지 말자.
     @JoinColumn(name = "team_id")
     private Team team;
+
+    public Member() {}
+
+    public Member(String name, int age, Team team) {
+        this.name = name;
+        this.age = age;
+        this.team = team;
+    }
 
     /**
      *  getter, setter, 기본생성자 필요함.
@@ -45,6 +60,14 @@ public class Member {
         this.name = name;
     }
 
+    public Email getEmail() {
+        return email;
+    }
+
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
     public int getAge() {
         return this.age;
     }
@@ -59,6 +82,14 @@ public class Member {
 
     public void setTeam(Team team) {
         this.team = team;
+    }
+
+    public MemberType getMemberType() {
+        return memberType;
+    }
+
+    public void setMemberType(MemberType memberType) {
+        this.memberType = memberType;
     }
 
     @Override
